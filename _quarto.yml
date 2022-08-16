@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "Wrangling genomics"
+  #author: "Jane Doe"
+  date: "8/10/2022"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - quality-control.qmd
+    - trimming.qmd
+    - variant-calling.qmd
+    - automation.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+

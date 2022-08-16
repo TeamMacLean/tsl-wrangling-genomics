@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.393">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>wrangling-genomics - 5&nbsp; Automating a variant calling workflow</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<link href="./references.html" rel="next">
+<link href="./variant-calling.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Automating a variant calling workflow</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">wrangling-genomics</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Background and metadata</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quality-control.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Assessing read quality</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./trimming.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Trimming and filtering</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./variant-calling.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variant calling workflow</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./automation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Automating a variant calling workflow</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-a-shell-script" id="toc-what-is-a-shell-script" class="nav-link active" data-scroll-target="#what-is-a-shell-script"> <span class="header-section-number">5.1</span> What is a shell script?</a></li>
+  <li><a href="#analysing-quality-with-fastqc" id="toc-analysing-quality-with-fastqc" class="nav-link" data-scroll-target="#analysing-quality-with-fastqc"> <span class="header-section-number">5.2</span> Analysing quality with FastQC</a></li>
+  <li><a href="#using-echo-statements" id="toc-using-echo-statements" class="nav-link" data-scroll-target="#using-echo-statements"> <span class="header-section-number">5.3</span> Using <code>echo</code> statements</a></li>
+  <li><a href="#automating-the-rest-of-our-variant-calling-workflow" id="toc-automating-the-rest-of-our-variant-calling-workflow" class="nav-link" data-scroll-target="#automating-the-rest-of-our-variant-calling-workflow"> <span class="header-section-number">5.4</span> Automating the rest of our variant calling workflow</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"> <span class="header-section-number">5.5</span> Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Automating a variant calling workflow</span></h1>
+</div>
+
+
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="callout-note callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+⏳ Time
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Teaching: 30 min</li>
+<li>Exercises: 15 min</li>
+</ul>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+🤔 Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>How can I make my workflow more efficient and less error-prone?</li>
+</ul>
+</div>
+</div>
+<div class="callout-important callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+🎯 Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Write a shell script with multiple variables.</li>
+<li>Incorporate a for loop into a shell script.</li>
+</ul>
+</div>
+</div>
+<section id="what-is-a-shell-script" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="what-is-a-shell-script"><span class="header-section-number">5.1</span> What is a shell script?</h2>
+<p>You wrote a simple shell script in a <a href="http://www.datacarpentry.org/shell-genomics/05-writing-scripts/">previous lesson</a> that we used to extract bad reads from our FASTQ files and put them into a new file.</p>
+<p>Here is the script you wrote:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-B1</span> <span class="at">-A2</span> NNNNNNNNNN <span class="pp">*</span>.fastq <span class="op">&gt;</span> scripted_bad_reads.txt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Script finished!"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>That script was only two lines long, but shell scripts can be much more complicated than that and can be used to perform a large number of operations on one or many files. This saves you the effort of having to type each of those commands over for each of your data files and makes your work less error-prone and more reproducible. For example, the variant calling workflow we just carried out had about eight steps where we had to type a command into our terminal. Most of these commands were pretty long. If we wanted to do this for all six of our data files, that would be forty-eight steps. If we had 50 samples (a more realistic number), it would be 400 steps! You can see why we want to automate this.</p>
+<p>We have also used <code>for</code> loops in previous lessons to iterate one or two commands over multiple input files. In these <code>for</code> loops, the filename was defined as a variable in the <code>for</code> statement, which enabled you to run the loop on multiple files. We will be using variable assignments like this in our new shell scripts.</p>
+<p>Here is the <code>for</code> loop you wrote for unzipping <code>.zip</code> files:</p>
+<pre><code>$ for filename in *.zip
+&gt; do
+&gt; unzip $filename
+&gt; done</code></pre>
+<p>And here is the one you wrote for running Trimmomatic on all of our <code>.fastq</code> sample files:</p>
+<pre><code>$ for infile in *_1.fastq.gz
+&gt; do
+&gt;   base=$(basename ${infile} _1.fastq.gz)
+&gt;   trimmomatic PE ${infile} ${base}_2.fastq.gz \
+&gt;                ${base}_1.trim.fastq.gz ${base}_1un.trim.fastq.gz \
+&gt;                ${base}_2.trim.fastq.gz ${base}_2un.trim.fastq.gz \
+&gt;                SLIDINGWINDOW:4:20 MINLEN:25 ILLUMINACLIP:NexteraPE-PE.fa:2:40:15 
+&gt; done</code></pre>
+<p>Notice that in this <code>for</code> loop, we used two variables, <code>infile</code>, which was defined in the <code>for</code> statement, and <code>base</code>, which was created from the filename during each iteration of the loop.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Creating variables
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Within the Bash shell you can create variables at any time (as we did above, and during the ‘for’ loop lesson). Assign any name and the value using the assignment operator: ‘=’. You can check the current definition of your variable by typing into your script: echo $variable_name.</p>
+</div>
+</div>
+<p>In this lesson, we will use two shell scripts to automate the variant calling analysis: one for FastQC analysis (including creating our summary file), and a second for the remaining variant calling. To write a script to run our FastQC analysis, we will take each of the commands we entered to run FastQC and process the output files and put them into a single file with a <code>.sh</code> extension. The <code>.sh</code> is not essential, but serves as a reminder to ourselves and to the computer that this is a shell script.</p>
+</section>
+<section id="analysing-quality-with-fastqc" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="analysing-quality-with-fastqc"><span class="header-section-number">5.2</span> Analysing quality with FastQC</h2>
+<p>We will use the command <code>touch</code> to create a new file where we will write our shell script. We will create this script in a new directory called <code>scripts/</code>. Previously, we used <code>nano</code> to create and open a new file. The command <code>touch</code> allows us to create a new file without opening that file.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> ~/dc_workshop/scripts</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/scripts</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> touch read_qc.sh</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">read_qc.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We now have an empty file called <code>read_qc.sh</code> in our <code>scripts/</code> directory. We will now open this file in <code>nano</code> and start building our script.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano read_qc.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Enter the following pieces of code into your shell script using <code>nano</code>, not into your terminal prompt (with <code>$</code>).</p>
+</div>
+</div>
+<p>Our first line will ensure that our script will exit if an error occurs, and is a good idea to include at the beginning of your scripts. The second line will move us into the <code>untrimmed_fastq/</code> directory when we run our script.</p>
+<pre><code>set -e
+cd ~/dc_workshop/data/untrimmed_fastq/</code></pre>
+<p>These next two lines will give us a status message to tell us that we are currently running FastQC, then will run FastQC on all of the files in our current directory with a <code>.fastq</code> extension.</p>
+<pre><code>echo "Running FastQC ..."
+fastqc *.fastq*</code></pre>
+<p>Our next line will create a new directory to hold our FastQC output files. Here we are using the <code>-p</code> option for <code>mkdir</code> again. It is a good idea to use this option in your shell scripts to avoid running into errors if you do not have the directory structure you think you do.</p>
+<pre><code>mkdir -p ~/dc_workshop/results/fastqc_untrimmed_reads</code></pre>
+<p>Our next three lines first give us a status message to tell us we are saving the results from FastQC, then moves all of the files with a <code>.zip</code> or a <code>.html</code> extension to the directory we just created for storing our FastQC results.</p>
+<pre><code>echo "Saving FastQC results…" mv .zip ~/dc_workshop/results/fastqc_untrimmed_reads/ mv .html ~/dc_workshop/results/fastqc_untrimmed_reads/</code></pre>
+<p>The next line moves us to the results directory where we have stored our output.</p>
+<pre><code>cd ~/dc_workshop/results/fastqc_untrimmed_reads/</code></pre>
+<p>The next five lines should look very familiar. First we give ourselves a status message to tell us that we are unzipping our ZIP files. Then we run our for loop to unzip all of the <code>.zip</code> files in this directory.</p>
+<pre><code>echo "Unzipping..."
+for filename in *.zip
+    do
+    unzip $filename
+    done</code></pre>
+<p>Next we concatenate all of our summary files into a single output file, with a status message to remind ourselves that this is what we are doing.</p>
+<pre><code>echo "Saving summary..."
+cat */summary.txt &gt; ~/dc_workshop/docs/fastqc_summaries.txt</code></pre>
+</section>
+<section id="using-echo-statements" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="using-echo-statements"><span class="header-section-number">5.3</span> Using <code>echo</code> statements</h2>
+<p>We have used <code>echo</code> statements to add progress statements to our script. Our script will print these statements as it is running and therefore we will be able to see how far our script has progressed.</p>
+<p>Your full shell script should now look like this:</p>
+<pre><code>set -e
+cd ~/dc_workshop/data/untrimmed_fastq/
+
+echo "Running FastQC ..."
+fastqc *.fastq*
+
+mkdir -p ~/dc_workshop/results/fastqc_untrimmed_reads
+
+echo "Saving FastQC results..."
+mv *.zip ~/dc_workshop/results/fastqc_untrimmed_reads/
+mv *.html ~/dc_workshop/results/fastqc_untrimmed_reads/
+
+cd ~/dc_workshop/results/fastqc_untrimmed_reads/
+
+echo "Unzipping..."
+for filename in *.zip
+    do
+    unzip $filename
+    done
+
+echo "Saving summary..."
+cat */summary.txt &gt; ~/dc_workshop/docs/fastqc_summaries.txt</code></pre>
+<p>Save your file and exit <code>nano</code>. We can now run our script:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bash read_qc.sh</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Running</span> FastQC ...</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Started</span> analysis of SRR2584866.fastq</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Approx</span> 5% complete for SRR2584866.fastq</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Approx</span> 10% complete for SRR2584866.fastq</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Approx</span> 15% complete for SRR2584866.fastq</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="ex">Approx</span> 20% complete for SRR2584866.fastq</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="ex">Approx</span> 25% complete for SRR2584866.fastq</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For each of your sample files, FastQC will ask if you want to replace the existing version with a new version. This is because we have already run FastQC on this samples files and generated all of the outputs. We are now doing this again using our scripts. Go ahead and select <code>A</code> each time this message appears. It will appear once per sample file (six times total).</p>
+<pre><code>replace SRR2584866_fastqc/Icons/fastqc_icon.png? [y]es, [n]o, [A]ll, [N]one, [r]ename:</code></pre>
+</section>
+<section id="automating-the-rest-of-our-variant-calling-workflow" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="automating-the-rest-of-our-variant-calling-workflow"><span class="header-section-number">5.4</span> Automating the rest of our variant calling workflow</h2>
+<p>We can extend these principles to the entire variant calling workflow. To do this, we will take all of the individual commands that we wrote before, put them into a single file, add variables so that the script knows to iterate through our input files and write to the appropriate output files. This is very similar to what we did with our <code>read_qc.sh</code> script, but will be a bit more complex.</p>
+<p>Download the script from <a href="https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh">here</a>. Download to <code>~/dc_workshop/scripts</code>.</p>
+<pre><code>curl -O https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh</code></pre>
+<p>Our variant calling workflow has the following steps:</p>
+<ol type="1">
+<li>Index the reference genome for use by <code>bwa</code> and <code>samtools</code>.</li>
+<li>Align reads to reference genome.</li>
+<li>Convert the format of the alignment to sorted BAM, with some intermediate steps.</li>
+<li>Calculate the read coverage of positions in the genome.</li>
+<li>Detect the single nucleotide variants (SNVs).</li>
+<li>Filter and report the SNVs in VCF (variant calling format).</li>
+</ol>
+<p>Let’s go through this script together:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/scripts</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The script should look like this:</p>
+<pre><code>set -e
+cd ~/dc_workshop/results
+
+genome=~/dc_workshop/data/ref_genome/ecoli_rel606.fasta
+
+bwa index $genome
+
+mkdir -p sam bam bcf vcf
+
+for fq1 in ~/dc_workshop/data/trimmed_fastq_small/*_1.trim.sub.fastq
+    do
+    echo "working with file $fq1"
+
+    base=$(basename $fq1 _1.trim.sub.fastq)
+    echo "base name is $base"
+
+    fq1=~/dc_workshop/data/trimmed_fastq_small/${base}_1.trim.sub.fastq
+    fq2=~/dc_workshop/data/trimmed_fastq_small/${base}_2.trim.sub.fastq
+    sam=~/dc_workshop/results/sam/${base}.aligned.sam
+    bam=~/dc_workshop/results/bam/${base}.aligned.bam
+    sorted_bam=~/dc_workshop/results/bam/${base}.aligned.sorted.bam
+    raw_bcf=~/dc_workshop/results/bcf/${base}_raw.bcf
+    variants=~/dc_workshop/results/vcf/${base}_variants.vcf
+    final_variants=~/dc_workshop/results/vcf/${base}_final_variants.vcf 
+
+    bwa mem $genome $fq1 $fq2 &gt; $sam
+    samtools view -S -b $sam &gt; $bam
+    samtools sort -o $sorted_bam $bam
+    samtools index $sorted_bam
+    bcftools mpileup -O b -o $raw_bcf -f $genome $sorted_bam
+    bcftools call --ploidy 1 -m -v -o $variants $raw_bcf 
+    vcfutils.pl varFilter $variants &gt; $final_variants
+   
+    done</code></pre>
+<p>Now, we will go through each line in the script before running it.</p>
+<p>First, notice that we change our working directory so that we can create new results subdirectories in the right location.</p>
+<pre><code>cd ~/dc_workshop/results</code></pre>
+<p>Next we tell our script where to find the reference genome by assigning the <code>genome</code> variable to the path to our reference genome:</p>
+<pre><code>genome=~/dc_workshop/data/ref_genome/ecoli_rel606.fasta</code></pre>
+<p>Next we index our reference genome for BWA:</p>
+<pre><code>bwa index $genome</code></pre>
+<p>And create the directory structure to store our results in:</p>
+<pre><code>mkdir -p sam bam bcf vcf</code></pre>
+<p>Then, we use a loop to run the variant calling workflow on each of our FASTQ files. The full list of commands within the loop will be executed once for each of the FASTQ files in the <code>data/trimmed_fastq_small/</code> directory. We will include a few <code>echo</code> statements to give us status updates on our progress.</p>
+<p>The first thing we do is assign the name of the FASTQ file we are currently working with to a variable called <code>fq1</code> and tell the script to <code>echo</code> the filename back to us so we can check which file we are on.</p>
+<pre><code>for fq1 in ~/dc_workshop/data/trimmed_fastq_small/*_1.trim.sub.fastq
+    do
+    echo "working with file $fq1"</code></pre>
+<p>We then extract the base name of the file (excluding the path and <code>.fastq</code> extension) and assign it to a new variable called <code>base</code>.</p>
+<pre><code>    base=$(basename $fq1 _1.trim.sub.fastq)
+    echo "base name is $base"</code></pre>
+<p>We can use the <code>base</code> variable to access both the <code>base_1.fastq</code> and <code>base_2.fastq</code> input files, and create variables to store the names of our output files. This makes the script easier to read because we do not need to type out the full name of each of the files: instead, we use the <code>base</code> variable, but add a different extension (e.g.&nbsp;<code>.sam</code>, <code>.bam</code>) for each file produced by our workflow.</p>
+<pre><code>    #input fastq files
+    fq1=~/dc_workshop/data/trimmed_fastq_small/${base}_1.trim.sub.fastq
+    fq2=~/dc_workshop/data/trimmed_fastq_small/${base}_2.trim.sub.fastq
+    
+    # output files
+    sam=~/dc_workshop/results/sam/${base}.aligned.sam
+    bam=~/dc_workshop/results/bam/${base}.aligned.bam
+    sorted_bam=~/dc_workshop/results/bam/${base}.aligned.sorted.bam
+    raw_bcf=~/dc_workshop/results/bcf/${base}_raw.bcf
+    variants=~/dc_workshop/results/bcf/${base}_variants.vcf
+    final_variants=~/dc_workshop/results/vcf/${base}_final_variants.vcf     </code></pre>
+<p>And finally, the actual workflow steps:</p>
+<p>1) align the reads to the reference genome and output a <code>.sam</code> file:</p>
+<pre><code>    bwa mem $genome $fq1 $fq2 &gt; $sam</code></pre>
+<p>2) convert the SAM file to BAM format:</p>
+<pre><code>    samtools view -S -b $sam &gt; $bam</code></pre>
+<p>3) sort the BAM file:</p>
+<pre><code>    samtools sort -o $sorted_bam $bam </code></pre>
+<p>4) index the BAM file for display purposes:</p>
+<pre><code>    samtools index $sorted_bam</code></pre>
+<p>5) calculate the read coverage of positions in the genome:</p>
+<pre><code>    bcftools mpileup -O b -o $raw_bcf -f $genome $sorted_bam </code></pre>
+<p>6) call SNVs with bcftools:</p>
+<pre><code>    bcftools call --ploidy 1 -m -v -o $variants $raw_bcf </code></pre>
+<p>7) filter and report the SNVs in variant calling format (VCF):</p>
+<pre><code>    vcfutils.pl varFilter $variants  &gt; $final_variants
+    </code></pre>
+<div class="callout-caution callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is a good idea to add comments to your code so that you (or a collaborator) can make sense of what you did later. Look through your existing script. Discuss with a neighbor where you should add comments. Add comments (anything following a # character will be interpreted as a comment, bash will not try to run these comments as code).</p>
+</div>
+</div>
+<p>Now we can run our script:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bash run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-caution callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The samples we just performed variant calling on are part of the long-term evolution experiment introduced at the beginning of our variant calling workflow. From the metadata table, we know that SRR2589044 was from generation 5000, SRR2584863 was from generation 15000, and SRR2584866 was from generation 50000. How did the number of mutations per sample change over time? Examine the metadata table. What is one reason the number of mutations may have changed the way they did?</p>
+<p>Hint: You can find a copy of the output files for the subsampled trimmed FASTQ file variant calling in the <code>~/.solutions/wrangling-solutions/variant_calling_auto/</code> directory.</p>
+</div>
+</div>
+<div class="callout-caution callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> for infile in ~/dc_workshop/results/vcf/<span class="pp">*</span>_final_variants.vcf</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> do</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     echo <span class="va">${infile}</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     grep <span class="ex">-v</span> <span class="st">"#"</span> <span class="va">${infile}</span> <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> done</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For SRR2589044 from generation 5000 there were 10 mutations, for SRR2584863 from generation 15000 there were 25 mutations, and SRR2584866 from generation 766 mutations. In the last generation, a hypermutable phenotype had evolved, causing this strain to have more mutations.</p>
+</div>
+</div>
+</div>
+<div class="callout-caution callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Bonus exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you have time after completing the previous exercise, use run_variant_calling.sh to run the variant calling pipeline on the full-sized trimmed FASTQ files. You should have a copy of these already in ~/dc_workshop/data/trimmed_fastq, but if you do not, there is a copy in ~/.solutions/wrangling-solutions/trimmed_fastq. Does the number of variants change per sample?</p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.5</span> Summary</h2>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Key points
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>We can combine multiple commands into a shell script to automate a workflow.</li>
+<li>Use <code>echo</code> statements within your scripts to get an automated progress update.</li>
+</ul>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./variant-calling.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Variant calling workflow</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
