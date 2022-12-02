@@ -47,6 +47,42 @@ We are studying a population of *Escherichia coli* (designated Ara-3), which wer
 
 The data are paired-end, so we will download two files for each sample. We will use the [European Nucleotide Archive](https://www.ebi.ac.uk/ena) to get our data. The ENA "provides a comprehensive record of the world's nucleotide sequencing information, covering raw sequencing data, sequence assembly information and functional annotation." The ENA also provides sequencing data in the fastq format, an important format for sequencing reads that we will be learning about today.
 
+### Option 1 - Copy directory containing data on the HPC
+
+Using the terminal, you can access the remote server using the `ssh` command (use your username)
+
+``` bash
+$ ssh [username]@hpc.nbi.ac.uk
+```
+
+Now that you are logged in on the server, we must start an `interactive` session.
+
+``` bash
+$ interactive
+```
+
+Copy the directory containing the dataset to your home directory.
+
+``` bash
+$ cp -r /tsl/data/dc_workshop/ ~
+```
+
+Now you can access the directory that now should contain the fastq files.
+
+``` bash
+$ cd ~/dc_workshop/data/untrimmed_fastq
+```
+
+The data comes in a compressed format, which is why there is a `.gz` at the end of the file names. This makes it faster to transfer, and allows it to take up less space on our computer. Let's unzip one of the files so that we can look at the fastq format.
+
+``` bash
+$ gunzip SRR2584863_1.fastq.gz
+```
+
+It takes few seconds.
+
+### Option 2 - Download the data from the ENA
+
 **You will download the data on your local machine.** To do so, open the terminal run the commands below.
 
 ``` bash
@@ -118,7 +154,7 @@ It takes few seconds.
 Although it looks complicated (and it is), we can understand the [fastq](https://en.wikipedia.org/wiki/FASTQ_format) format with a little decoding. Some rules about the format include...
 
 | Line | Description                                                                                                  |
-|:---------------|:-------------------------------------------------------|
+|:-----------------|:-----------------------------------------------------|
 | 1    | Always begins with '\@' and then information about the read                                                  |
 | 2    | The actual DNA sequence                                                                                      |
 | 3    | Always begins with a '+' and sometimes the same info in line 1                                               |
