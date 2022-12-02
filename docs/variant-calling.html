@@ -214,7 +214,11 @@ div.csl-indent {
    
   <ul>
   <li><a href="#alignment-to-a-reference-genome" id="toc-alignment-to-a-reference-genome" class="nav-link active" data-scroll-target="#alignment-to-a-reference-genome"> <span class="header-section-number">4.1</span> Alignment to a reference genome</a></li>
-  <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up"> <span class="header-section-number">4.2</span> Setting up</a></li>
+  <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up"> <span class="header-section-number">4.2</span> Setting up</a>
+  <ul class="collapse">
+  <li><a href="#option-1-copy-from-shared-directory-on-the-hpc" id="toc-option-1-copy-from-shared-directory-on-the-hpc" class="nav-link" data-scroll-target="#option-1-copy-from-shared-directory-on-the-hpc"> <span class="header-section-number">4.2.1</span> Option 1: Copy from shared directory on the HPC</a></li>
+  <li><a href="#option-2-download-from-ncbi" id="toc-option-2-download-from-ncbi" class="nav-link" data-scroll-target="#option-2-download-from-ncbi"> <span class="header-section-number">4.2.2</span> Option 2: Download from NCBI</a></li>
+  </ul></li>
   <li><a href="#index-the-reference-genome" id="toc-index-the-reference-genome" class="nav-link" data-scroll-target="#index-the-reference-genome"> <span class="header-section-number">4.3</span> Index the reference genome</a></li>
   <li><a href="#align-reads-to-the-reference-genome" id="toc-align-reads-to-the-reference-genome" class="nav-link" data-scroll-target="#align-reads-to-the-reference-genome"> <span class="header-section-number">4.4</span> Align reads to the reference genome</a>
   <ul class="collapse">
@@ -318,6 +322,19 @@ div.csl-indent {
 </section>
 <section id="setting-up" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="setting-up"><span class="header-section-number">4.2</span> Setting up</h2>
+<section id="option-1-copy-from-shared-directory-on-the-hpc" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="option-1-copy-from-shared-directory-on-the-hpc"><span class="header-section-number">4.2.1</span> Option 1: Copy from shared directory on the HPC</h3>
+<p>Copy the directories containing the reference genome and small dataset to your directory:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cp <span class="at">-r</span> /tsl/data/trimmed_fastq_small ~/dc_workshop/data/</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cp <span class="at">-r</span> /tsl/data/ref_genome/ ~/dc_workshop/data/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Rename the reference genome</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/data/ref_genome</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mv GCA_000017985.1_ASM1798v1_genomic.fna.gz ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Unzip the reference genome</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> gunzip ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="option-2-download-from-ncbi" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="option-2-download-from-ncbi"><span class="header-section-number">4.2.2</span> Option 2: Download from NCBI</h3>
 <p>First we download the reference genome for <em>E. coli</em> REL606. Although we could copy or move the file with <code>cp</code> or <code>mv</code>, most genomics workflows begin with a download step, so we will practice that here.</p>
 <div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
@@ -332,10 +349,10 @@ Important
 <p>Enter the following commands in your local terminal (not on the remote server).</p>
 </div>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> data/ref_genome</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-L</span> <span class="at">-o</span> data/ref_genome/ecoli_rel606.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/017/985/GCA_000017985.1_ASM1798v1/GCA_000017985.1_ASM1798v1_genomic.fna.gz</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> gunzip data/ref_genome/ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> data/ref_genome</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-L</span> <span class="at">-o</span> data/ref_genome/ecoli_rel606.fasta.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/017/985/GCA_000017985.1_ASM1798v1/GCA_000017985.1_ASM1798v1_genomic.fna.gz</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> gunzip data/ref_genome/ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout-caution callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -361,17 +378,17 @@ Solution
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The name of the sequence follows the <code>&gt;</code> character. The name is <code>CP000819.1 Escherichia coli B str. REL606, complete genome</code>. Keep this chromosome name (<code>CP000819.1</code>) in mind, as we will use it later in the lesson.</p>
 </div>
 </div>
 </div>
 <p>We will also download a set of trimmed FASTQ files to work with. These are small subsets of our real trimmed data, and will enable us to run our variant calling workflow quite quickly.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-L</span> <span class="at">-o</span> sub.tar.gz https://ndownloader.figshare.com/files/14418248</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tar xvf sub.tar.gz</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mv sub/ ~/dc_workshop/data/trimmed_fastq_small</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-L</span> <span class="at">-o</span> sub.tar.gz https://ndownloader.figshare.com/files/14418248</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tar xvf sub.tar.gz</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mv sub/ ~/dc_workshop/data/trimmed_fastq_small</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now we must transfer the new files to the remote server. In your local terminal, you can open the current directory with the following command:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> open .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> open .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now use the Windows navigation system to transfer the directories <code>ref_genome</code> and <code>trimmed_fastq_small</code>to the server under <code>/hpc-home/[username]/dc_workshop/data</code>.</p>
 <p><img src="images/transfer-results-to-local-01.png" class="img-fluid"></p>
 <div class="callout-warning callout callout-style-default callout-captioned">
@@ -387,22 +404,23 @@ Warning
 <p>Now you must return to your interactive session on the remote server.</p>
 </div>
 </div>
-<p>Let’s make sure we are back in the <code>dc_workshop</code> directory and that the two directories were successfully transferred to the remote server:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd /hpc-home/jegoussc/dc_workshop/</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-F</span> data/</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ref_genome/</span>  trimmed_fastq_small/  untrimmed_fastq/</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-F</span> data/ref_genome/</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ecoli_rel606.fasta*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You will also need to create directories for the results that will be generated as part of this workflow. We can do this in a single line of code, because <code>mkdir</code> can accept multiple new directory names as input.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> results/sam results/bam results/bcf results/vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
 </section>
 <section id="index-the-reference-genome" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="index-the-reference-genome"><span class="header-section-number">4.3</span> Index the reference genome</h2>
+<p>Let’s make sure we are back in the <code>dc_workshop</code> directory and that the two directories were successfully transferred to the remote server:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-F</span> data/</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ref_genome/</span>  trimmed_fastq_small/  untrimmed_fastq/</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-F</span> data/ref_genome/</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ecoli_rel606.fasta*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You will also need to create directories for the results that will be generated as part of this workflow. We can do this in a single line of code, because <code>mkdir</code> can accept multiple new directory names as input.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> results/sam results/bam results/bcf results/vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Our first step is to index the reference genome for use by BWA.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /nbi/software/production/bin/bwa-0.7.5</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">loaded</span> /nbi/software/production/bin/bwa-0.7.5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /nbi/software/production/bin/bwa-0.7.5</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">loaded</span> /nbi/software/production/bin/bwa-0.7.5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Indexing allows the aligner to quickly find potential alignment sites for query sequences in a genome, which saves time during alignment. Indexing the reference only has to be run once. The only reason you would want to create a new index is if you are working with a different reference genome or you are using a different tool for alignment.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa index data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa index data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>While the index is created, you will see output that looks something like this:</p>
 <pre><code>[bwa_index] Pack FASTA... 0.15 sec
 [bwa_index] Construct BWT for the packed sequence...
@@ -431,7 +449,7 @@ BWA alignment options
 <h2 data-number="4.4" class="anchored" data-anchor-id="align-reads-to-the-reference-genome"><span class="header-section-number">4.4</span> Align reads to the reference genome</h2>
 <p>The alignment process consists of choosing an appropriate reference genome to map our reads against and then deciding on an aligner. We will use the BWA-MEM algorithm, which is the latest and is generally recommended for high-quality queries as it is faster and more accurate.</p>
 <p>An example of what a <code>bwa</code> command looks like is below. This command will not run, as we do not have the files <code>ref_genome.fa</code>, <code>input_file_R1.fastq</code>, or <code>input_file_R2.fastq</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa mem ref_genome.fasta input_file_R1.fastq input_file_R2.fastq <span class="op">&gt;</span> output.sam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa mem ref_genome.fasta input_file_R1.fastq input_file_R2.fastq <span class="op">&gt;</span> output.sam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Have a look at the <a href="http://bio-bwa.sourceforge.net/bwa.shtml">bwa options page</a>. While we are running <code>bwa</code> with the default parameters here, your use case might require a change of parameters.</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
@@ -447,7 +465,10 @@ Tip
 </div>
 </div>
 <p>We are going to start by aligning the reads from just one of the samples in our data set (<code>SRR2584866</code>). Later, we will be iterating this whole process on all of our sample files.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa mem data/ref_genome/ecoli_rel606.fasta data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq <span class="op">&gt;</span> results/sam/SRR2584866.aligned.sam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bwa mem data/ref_genome/ecoli_rel606.fasta <span class="dt">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq <span class="dt">\</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq <span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  results/sam/SRR2584866.aligned.sam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You will see output that starts like this:</p>
 <pre><code>[M::main_mem] read 77446 sequences (10000033 bp)...
 [M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (48, 36779, 21, 61)
@@ -468,18 +489,18 @@ Tip
 <p><img src="https://datacarpentry.org/wrangling-genomics/img/sam_bam.png" class="img-fluid"></p>
 <p><img src="https://datacarpentry.org/wrangling-genomics/img/sam_bam3.png" class="img-fluid"></p>
 <p>We will convert the SAM file to BAM format using the <code>samtools</code> program <span class="citation" data-cites="li2009sequence">(<a href="references.html#ref-li2009sequence" role="doc-biblioref">Li et al. 2009</a>)</span> with the <code>view</code> command and tell this command that the input is in SAM format (<code>-S</code>) and to output BAM format (<code>-b</code>):</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /tsl/software/testing/bin/samtools-1.9</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools view <span class="at">-S</span> <span class="at">-b</span> results/sam/SRR2584866.aligned.sam <span class="op">&gt;</span> results/bam/SRR2584866.aligned.bam</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[samopen]</span> SAM header is present: 1 sequences.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /tsl/software/testing/bin/samtools-1.9</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools view <span class="at">-S</span> <span class="at">-b</span> results/sam/SRR2584866.aligned.sam <span class="op">&gt;</span> results/bam/SRR2584866.aligned.bam</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[samopen]</span> SAM header is present: 1 sequences.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="sort-bam-file-by-coordinates" class="level3" data-number="4.4.2">
 <h3 data-number="4.4.2" class="anchored" data-anchor-id="sort-bam-file-by-coordinates"><span class="header-section-number">4.4.2</span> Sort BAM file by coordinates</h3>
 <p>Next we sort the BAM file using the <code>sort</code> command from <code>samtools</code>. <code>-o</code> tells the command where to write the output. Our files are pretty small, so we will not see this output. If you run the workflow with larger files, you will see something like this:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools sort <span class="at">-o</span> results/bam/SRR2584866.aligned.sorted.bam results/bam/SRR2584866.aligned.bam</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">[bam_sort_core]</span> merging from 2 files...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools sort <span class="at">-o</span> results/bam/SRR2584866.aligned.sorted.bam results/bam/SRR2584866.aligned.bam</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">[bam_sort_core]</span> merging from 2 files...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>SAM/BAM files can be sorted in multiple ways, e.g.&nbsp;by location of alignment on the chromosome, by read name, etc. It is important to be aware that different alignment tools will output differently sorted SAM/BAM, and different downstream tools require differently sorted alignment files as input.</p>
 <p>You can use <code>samtools</code> to learn more about this BAM file as well.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools flagstat results/bam/SRR2584866.aligned.sorted.bam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools flagstat results/bam/SRR2584866.aligned.sorted.bam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This will give you the following statistics about your sorted bam file:</p>
 <pre><code>351169 + 0 in total (QC-passed reads + QC-failed reads)
 0 + 0 secondary
@@ -499,30 +520,32 @@ Tip
 <section id="variant-calling" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="variant-calling"><span class="header-section-number">4.5</span> Variant calling</h2>
 <p>A variant call is a conclusion that there is a nucleotide difference vs.&nbsp;some reference at a given position in an individual genome or transcriptome, often referred to as a Single Nucleotide Variant (SNV). The call is usually accompanied by an estimate of variant frequency and some measure of confidence. Similar to other steps in this workflow, there are a number of tools available for variant calling. In this workshop we will be using <code>bcftools</code>, but there are a few things we need to do before actually calling the variants.</p>
-<pre><code>$ source package /tsl/software/testing/bin/bcftools-1.9</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /tsl/software/testing/bin/bcftools-1.9</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">loaded</span> /tsl/software/testing/bin/bcftools-1.9</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="step-1-calculate-the-read-coverage-of-positions-in-the-genome" class="level3" data-number="4.5.1">
 <h3 data-number="4.5.1" class="anchored" data-anchor-id="step-1-calculate-the-read-coverage-of-positions-in-the-genome"><span class="header-section-number">4.5.1</span> Step 1: Calculate the read coverage of positions in the genome</h3>
 <p>Do the first pass on variant calling by counting read coverage with bcftools. We will use the command mpileup. The flag -O b tells bcftools to generate a bcf format output file, -o specifies where to write the output file, and -f flags the path to the reference genome:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bcftools mpileup <span class="at">-O</span> b <span class="at">-o</span> results/bcf/SRR2584866_raw.bcf <span class="dt">\</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>-f data/ref_genome/ecoli_rel606.fasta results/bam/SRR2584866.aligned.sorted.bam</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[mpileup]</span> 1 samples in 1 input files</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bcftools mpileup <span class="at">-O</span> b <span class="at">-o</span> results/bcf/SRR2584866_raw.bcf <span class="dt">\</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>-f data/ref_genome/ecoli_rel606.fasta results/bam/SRR2584866.aligned.sorted.bam</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[mpileup]</span> 1 samples in 1 input files</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>It should take less than 1 minute to finish.</p>
 <p>We have now generated a file with coverage information for every base.</p>
 </section>
 <section id="step-2-detect-the-single-nucleotide-variants-snvs" class="level3" data-number="4.5.2">
 <h3 data-number="4.5.2" class="anchored" data-anchor-id="step-2-detect-the-single-nucleotide-variants-snvs"><span class="header-section-number">4.5.2</span> Step 2: Detect the single nucleotide variants (SNVs)</h3>
 <p>Identify SNVs using <code>bcftools call</code>. We have to specify ploidy with the flag <code>--ploidy</code>, which is one for the haploid <em>E. coli</em>. <code>-m</code> allows for multi-allelic and rare-variant calling, <code>-v</code> tells the program to output variant sites only (not every site in the genome), and <code>-o</code> specifies where to write the output file:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bcftools call <span class="at">--ploidy</span> 1 <span class="at">-m</span> <span class="at">-v</span> <span class="at">-o</span> results/vcf/SRR2584866_variants.vcf results/bcf/SRR2584866_raw.bcf </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bcftools call <span class="at">--ploidy</span> 1 <span class="at">-m</span> <span class="at">-v</span> <span class="at">-o</span> results/vcf/SRR2584866_variants.vcf results/bcf/SRR2584866_raw.bcf </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="step-3-filter-and-report-the-snv-variants-in-variant-calling-format-vcf" class="level3" data-number="4.5.3">
 <h3 data-number="4.5.3" class="anchored" data-anchor-id="step-3-filter-and-report-the-snv-variants-in-variant-calling-format-vcf"><span class="header-section-number">4.5.3</span> Step 3: Filter and report the SNV variants in variant calling format (VCF)</h3>
 <p>Filter the SNVs for the final output in VCF format, using <code>vcfutils.pl</code>:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> vcfutils.pl varFilter results/vcf/SRR2584866_variants.vcf  <span class="op">&gt;</span> results/vcf/SRR2584866_final_variants.vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> vcfutils.pl varFilter results/vcf/SRR2584866_variants.vcf  <span class="op">&gt;</span> results/vcf/SRR2584866_final_variants.vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="explore-the-vcf-format" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="explore-the-vcf-format"><span class="header-section-number">4.6</span> Explore the VCF format</h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less <span class="at">-S</span> results/vcf/SRR2584866_final_variants.vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less <span class="at">-S</span> results/vcf/SRR2584866_final_variants.vcf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You will see the header (which describes the format), the time and date the file was created, the version of <code>bcftools</code> that was used, the command line parameters used, and some additional information:</p>
 <pre><code>##fileformat=VCFv4.2
 ##FILTER=&lt;ID=PASS,Description="All filters passed"&gt;
@@ -570,8 +593,8 @@ CP000819.1      64042   .       G       A       225     .       DP=18;VDB=0.4513
 <p>The first few columns represent the information we have about a predicted variation.</p>
 <table class="table">
 <colgroup>
-<col style="width: 26%">
-<col style="width: 73%">
+<col style="width: 27%">
+<col style="width: 72%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -633,8 +656,8 @@ CP000819.1      64042   .       G       A       225     .       DP=18;VDB=0.4513
 <p>For our file, the metrics presented are GT:PL:GQ.</p>
 <table class="table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 26%">
+<col style="width: 73%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -687,8 +710,8 @@ Solution
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-v</span> <span class="st">"#"</span> results/vcf/SRR2584866_final_variants.vcf <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">765</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-v</span> <span class="st">"#"</span> results/vcf/SRR2584866_final_variants.vcf <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">765</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>There are 765 variants in this file.</p>
 </div>
 </div>
@@ -703,7 +726,7 @@ Solution
 <h3 data-number="4.7.1" class="anchored" data-anchor-id="visualization-with-tview"><span class="header-section-number">4.7.1</span> Visualization with tview</h3>
 <p><a href="http://www.htslib.org/">Samtools</a> implements a very simple text alignment viewer based on the GNU <code>ncurses</code> library, called <code>tview</code>. This alignment viewer works with short indels and shows <a href="http://maq.sourceforge.net/">MAQ</a> consensus. It uses different colors to display mapping quality or base quality, subjected to users’ choice. Samtools viewer is known to work with a 130 GB alignment swiftly. Due to its text interface, displaying alignments over network is also very fast.</p>
 <p>In order to visualize our mapped reads, we use <code>tview</code>, giving it the sorted bam file and the reference file:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools tview results/bam/SRR2584866.aligned.sorted.bam data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools tview results/bam/SRR2584866.aligned.sorted.bam data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <pre><code>1         11        21        31        41        51        61        71        81        91        101       111       121
 AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGCTTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATAC
 ..................................................................................................................................
@@ -755,7 +778,7 @@ Solution
 </div>
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools tview ~/dc_workshop/results/bam/SRR2584866.aligned.sorted.bam ~/dc_workshop/data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools tview ~/dc_workshop/results/bam/SRR2584866.aligned.sorted.bam ~/dc_workshop/data/ref_genome/ecoli_rel606.fasta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then type <code>g</code>. In the dialogue box, type <code>CP000819.1:4377265</code>. <code>G</code> is the variant. <code>A</code> is canonical. This variant possibly changes the phenotype of this sample to hypermutable. It occurs in the gene <em>mutL</em>, which controls DNA mismatch repair.</p>
 </div>
 </div>

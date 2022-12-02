@@ -34,6 +34,30 @@ The alignment process consists of two steps:
 
 ## Setting up
 
+### Option 1: Copy from shared directory on the HPC
+
+Copy the directories containing the reference genome and small dataset to your directory:
+
+``` bash
+$ cp -r /tsl/data/trimmed_fastq_small ~/dc_workshop/data/
+$ cp -r /tsl/data/ref_genome/ ~/dc_workshop/data/
+```
+
+Rename the reference genome
+
+``` bash
+$ cd ~/dc_workshop/data/ref_genome
+$ mv GCA_000017985.1_ASM1798v1_genomic.fna.gz ecoli_rel606.fasta.gz
+```
+
+Unzip the reference genome
+
+``` bash
+$ gunzip ecoli_rel606.fasta.gz
+```
+
+### Option 2: Download from NCBI
+
 First we download the reference genome for *E. coli* REL606. Although we could copy or move the file with `cp` or `mv`, most genomics workflows begin with a download step, so we will practice that here.
 
 ::: callout-important
@@ -85,10 +109,12 @@ Now use the Windows navigation system to transfer the directories `ref_genome` a
 Now you must return to your interactive session on the remote server.
 :::
 
+## Index the reference genome
+
 Let's make sure we are back in the `dc_workshop` directory and that the two directories were successfully transferred to the remote server:
 
 ``` bash
-$ cd /hpc-home/jegoussc/dc_workshop/
+$ cd ~/dc_workshop/
 $ ls -F data/
 ref_genome/  trimmed_fastq_small/  untrimmed_fastq/
 $ ls -F data/ref_genome/
@@ -100,8 +126,6 @@ You will also need to create directories for the results that will be generated 
 ``` bash
 $ mkdir -p results/sam results/bam results/bcf results/vcf
 ```
-
-## Index the reference genome
 
 Our first step is to index the reference genome for use by BWA.
 
@@ -153,7 +177,10 @@ Have a look at the [bwa options page](http://bio-bwa.sourceforge.net/bwa.shtml).
 We are going to start by aligning the reads from just one of the samples in our data set (`SRR2584866`). Later, we will be iterating this whole process on all of our sample files.
 
 ``` bash
-$ bwa mem data/ref_genome/ecoli_rel606.fasta data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq > results/sam/SRR2584866.aligned.sam
+$ bwa mem data/ref_genome/ecoli_rel606.fasta \
+  data/trimmed_fastq_small/SRR2584866_1.trim.sub.fastq \
+  data/trimmed_fastq_small/SRR2584866_2.trim.sub.fastq > \
+  results/sam/SRR2584866.aligned.sam
 ```
 
 You will see output that starts like this:
@@ -228,7 +255,10 @@ This will give you the following statistics about your sorted bam file:
 
 A variant call is a conclusion that there is a nucleotide difference vs. some reference at a given position in an individual genome or transcriptome, often referred to as a Single Nucleotide Variant (SNV). The call is usually accompanied by an estimate of variant frequency and some measure of confidence. Similar to other steps in this workflow, there are a number of tools available for variant calling. In this workshop we will be using `bcftools`, but there are a few things we need to do before actually calling the variants.
 
-    $ source package /tsl/software/testing/bin/bcftools-1.9
+``` bash
+$ source package /tsl/software/testing/bin/bcftools-1.9
+loaded /tsl/software/testing/bin/bcftools-1.9
+```
 
 ### Step 1: Calculate the read coverage of positions in the genome
 
@@ -238,6 +268,7 @@ Do the first pass on variant calling by counting read coverage with bcftools. We
 $ bcftools mpileup -O b -o results/bcf/SRR2584866_raw.bcf \
 -f data/ref_genome/ecoli_rel606.fasta results/bam/SRR2584866.aligned.sorted.bam
 [mpileup] 1 samples in 1 input files
+...
 ```
 
 It should take less than 1 minute to finish.
@@ -318,7 +349,7 @@ This is a lot of information, so let's take some time to make sure we understand
 The first few columns represent the information we have about a predicted variation.
 
 | column | info                                                                                                                      |
-|:------------------|:----------------------------------------------------|
+|:-------------------|:---------------------------------------------------|
 | CHROM  | contig location where the variation occurs                                                                                |
 | POS    | position within the contig where the variation occurs                                                                     |
 | ID     | a `.` until we add annotation information                                                                                 |
@@ -339,7 +370,7 @@ The last two columns contain the genotypes and can be tricky to decode.
 For our file, the metrics presented are GT:PL:GQ.
 
 | metric | definition                                                                                                                                                                                                                                                                                                                              |
-|:-----------------|:-----------------------------------------------------|
+|:------------------|:----------------------------------------------------|
 | AD, DP | the depth per allele by sample and coverage                                                                                                                                                                                                                                                                                             |
 | GT     | the genotype for the sample at this loci. For a diploid organism, the GT field indicates the two alleles carried by the sample, encoded by a 0 for the REF allele, 1 for the first ALT allele, 2 for the second ALT allele, etc. A 0/0 means homozygous reference, 0/1 is heterozygous, and 1/1 is homozygous for the alternate allele. |
 | PL     | the likelihoods of the given genotypes                                                                                                                                                                                                                                                                                                  |

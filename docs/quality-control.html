@@ -705,7 +705,8 @@ SRR2584863_2_fastqc.zip   SRR2584866_2_fastqc.zip   SRR2589044_2_fastqc.zip</cod
 <h2 data-number="2.4" class="anchored" data-anchor-id="documenting-your-work"><span class="header-section-number">2.4</span> Documenting your work</h2>
 <p>We can make a record of the results we obtained for all our samples</p>
 <p>by concatenating all of our <code>summary.txt</code> files into a single file using the <code>cat</code> command. We will call this <code>fastqc_summaries.txt</code> and move it to <code>~/dc_workshop/docs</code>.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="pp">*</span>/summary.txt <span class="op">&gt;</span> ~/dc_workshop/docs/fastqc_summaries.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> ~/dc_workshop/docs/</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="pp">*</span>/summary.txt <span class="op">&gt;</span> ~/dc_workshop/docs/fastqc_summaries.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout-caution callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
