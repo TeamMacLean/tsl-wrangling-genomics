@@ -84,10 +84,13 @@ $ nano read_qc.sh
 Enter the following pieces of code into your shell script using `nano`, not into your terminal prompt (with `$`).
 :::
 
-Our first line will ensure that our script will exit if an error occurs, and is a good idea to include at the beginning of your scripts. The second line will move us into the `untrimmed_fastq/` directory when we run our script.
+Our first line will ensure that our script will exit if an error occurs, and is a good idea to include at the beginning of your scripts. The second line will move us into the `untrimmed_fastq/` directory when we run our script. Then we load the software needed.
 
     set -e
     cd ~/dc_workshop/data/untrimmed_fastq/
+
+    source package /nbi/software/production/bin/fastqc-0.11.8
+    source package /nbi/software/production/bin/trimmomatic-0.39
 
 These next two lines will give us a status message to tell us that we are currently running FastQC, then will run FastQC on all of the files in our current directory with a `.fastq` extension.
 
@@ -129,6 +132,9 @@ Your full shell script should now look like this:
 
     set -e
     cd ~/dc_workshop/data/untrimmed_fastq/
+
+    source package /nbi/software/production/bin/fastqc-0.11.8
+    source package /nbi/software/production/bin/trimmomatic-0.39
 
     echo "Running FastQC ..."
     source package /nbi/software/production/bin/fastqc-0.11.8
@@ -176,9 +182,22 @@ For each of your sample files, FastQC will ask if you want to replace the existi
 
 We can extend these principles to the entire variant calling workflow. To do this, we will take all of the individual commands that we wrote before, put them into a single file, add variables so that the script knows to iterate through our input files and write to the appropriate output files. This is very similar to what we did with our `read_qc.sh` script, but will be a bit more complex.
 
-Download the script from [here](https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh). Download to `~/dc_workshop/scripts`.
+The complete script can be found [here](https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh).
+
+``` bash
+$ cd ~/dc_workshop/scripts
+$ nano run_variant_calling.sh
+```
+
+Then copy and paste the script and close the text editor.
+
+::: {.callout-note collapse="true"}
+## Possibility to download the script
+
+Download the script from [here](https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh) to `~/dc_workshop/scripts`.
 
     curl -O https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh
+:::
 
 Our variant calling workflow has the following steps:
 
@@ -200,6 +219,10 @@ The script should look like this:
 
     set -e
     cd ~/dc_workshop/results
+
+    source package /nbi/software/production/bin/bwa-0.7.5
+    source package /tsl/software/testing/bin/samtools-1.9
+    source package /tsl/software/testing/bin/bcftools-1.9
 
     genome=~/dc_workshop/data/ref_genome/ecoli_rel606.fasta
 

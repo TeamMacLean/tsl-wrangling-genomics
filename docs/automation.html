@@ -332,9 +332,12 @@ Warning
 <p>Enter the following pieces of code into your shell script using <code>nano</code>, not into your terminal prompt (with <code>$</code>).</p>
 </div>
 </div>
-<p>Our first line will ensure that our script will exit if an error occurs, and is a good idea to include at the beginning of your scripts. The second line will move us into the <code>untrimmed_fastq/</code> directory when we run our script.</p>
+<p>Our first line will ensure that our script will exit if an error occurs, and is a good idea to include at the beginning of your scripts. The second line will move us into the <code>untrimmed_fastq/</code> directory when we run our script. Then we load the software needed.</p>
 <pre><code>set -e
-cd ~/dc_workshop/data/untrimmed_fastq/</code></pre>
+cd ~/dc_workshop/data/untrimmed_fastq/
+
+source package /nbi/software/production/bin/fastqc-0.11.8
+source package /nbi/software/production/bin/trimmomatic-0.39</code></pre>
 <p>These next two lines will give us a status message to tell us that we are currently running FastQC, then will run FastQC on all of the files in our current directory with a <code>.fastq</code> extension.</p>
 <pre><code>echo "Running FastQC ..."
 fastqc *.fastq*</code></pre>
@@ -362,6 +365,9 @@ cat */summary.txt &gt; ~/dc_workshop/docs/fastqc_summaries.txt</code></pre>
 <p>Your full shell script should now look like this:</p>
 <pre><code>set -e
 cd ~/dc_workshop/data/untrimmed_fastq/
+
+source package /nbi/software/production/bin/fastqc-0.11.8
+source package /nbi/software/production/bin/trimmomatic-0.39
 
 echo "Running FastQC ..."
 source package /nbi/software/production/bin/fastqc-0.11.8
@@ -402,8 +408,27 @@ cat */summary.txt &gt; ~/dc_workshop/docs/fastqc_summaries.txt</code></pre>
 <section id="automating-the-rest-of-our-variant-calling-workflow" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="automating-the-rest-of-our-variant-calling-workflow"><span class="header-section-number">5.4</span> Automating the rest of our variant calling workflow</h2>
 <p>We can extend these principles to the entire variant calling workflow. To do this, we will take all of the individual commands that we wrote before, put them into a single file, add variables so that the script knows to iterate through our input files and write to the appropriate output files. This is very similar to what we did with our <code>read_qc.sh</code> script, but will be a bit more complex.</p>
-<p>Download the script from <a href="https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh">here</a>. Download to <code>~/dc_workshop/scripts</code>.</p>
+<p>The complete script can be found <a href="https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh">here</a>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/scripts</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then copy and paste the script and close the text editor.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Possibility to download the script
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Download the script from <a href="https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh">here</a> to <code>~/dc_workshop/scripts</code>.</p>
 <pre><code>curl -O https://raw.githubusercontent.com/datacarpentry/wrangling-genomics/gh-pages/files/run_variant_calling.sh</code></pre>
+</div>
+</div>
+</div>
 <p>Our variant calling workflow has the following steps:</p>
 <ol type="1">
 <li>Index the reference genome for use by <code>bwa</code> and <code>samtools</code>.</li>
@@ -414,11 +439,15 @@ cat */summary.txt &gt; ~/dc_workshop/docs/fastqc_summaries.txt</code></pre>
 <li>Filter and report the SNVs in VCF (variant calling format).</li>
 </ol>
 <p>Let’s go through this script together:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/scripts</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/scripts</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The script should look like this:</p>
 <pre><code>set -e
 cd ~/dc_workshop/results
+
+source package /nbi/software/production/bin/bwa-0.7.5
+source package /tsl/software/testing/bin/samtools-1.9
+source package /tsl/software/testing/bin/bcftools-1.9
 
 genome=~/dc_workshop/data/ref_genome/ecoli_rel606.fasta
 
@@ -510,7 +539,7 @@ Exercise
 </div>
 </div>
 <p>Now we can run our script:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bash run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> bash run_variant_calling.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout-caution callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -526,7 +555,7 @@ Exercise
 </div>
 </div>
 <div class="callout-caution callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -535,13 +564,13 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> for infile in ~/dc_workshop/results/vcf/<span class="pp">*</span>_final_variants.vcf</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> do</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     echo <span class="va">${infile}</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     grep <span class="ex">-v</span> <span class="st">"#"</span> <span class="va">${infile}</span> <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> done</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> for infile in ~/dc_workshop/results/vcf/<span class="pp">*</span>_final_variants.vcf</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> do</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     echo <span class="va">${infile}</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span>     grep <span class="ex">-v</span> <span class="st">"#"</span> <span class="va">${infile}</span> <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> done</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>For SRR2589044 from generation 5000 there were 10 mutations, for SRR2584863 from generation 15000 there were 25 mutations, and SRR2584866 from generation 766 mutations. In the last generation, a hypermutable phenotype had evolved, causing this strain to have more mutations.</p>
 </div>
 </div>
