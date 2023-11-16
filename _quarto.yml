@@ -1,10 +1,11 @@
 project:
   type: book
+  output-dir: docs
 
 book:
   title: "Wrangling genomics"
   #author: "Jane Doe"
-  date: "8/10/2022"
+  date: "11/16/2023"
   chapters:
     - index.qmd
     - intro.qmd

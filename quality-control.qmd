@@ -47,12 +47,12 @@ We are studying a population of *Escherichia coli* (designated Ara-3), which wer
 
 The data are paired-end, so we will download two files for each sample. We will use the [European Nucleotide Archive](https://www.ebi.ac.uk/ena) to get our data. The ENA "provides a comprehensive record of the world's nucleotide sequencing information, covering raw sequencing data, sequence assembly information and functional annotation." The ENA also provides sequencing data in the fastq format, an important format for sequencing reads that we will be learning about today.
 
-### Option 1 - Copy directory containing data on the HPC
+### Copy directory containing data on the HPC
 
 Using the terminal, you can access the remote server using the `ssh` command (use your username)
 
 ``` bash
-$ ssh [username]@hpc.nbi.ac.uk
+$ ssh [username]@hpc.tsl.ac.uk
 ```
 
 Now that you are logged in on the server, we must start an `interactive` session.
@@ -79,73 +79,7 @@ The data comes in a compressed format, which is why there is a `.gz` at the end 
 $ gunzip SRR2584863_1.fastq.gz
 ```
 
-It takes few seconds.
-
-### Option 2 - Download the data from the ENA
-
-**You will download the data on your local machine.** To do so, open the terminal run the commands below.
-
-``` bash
-$ mkdir -p ~/dc_workshop/data/untrimmed_fastq/
-$ cd ~/dc_workshop/data/untrimmed_fastq
-
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/004/SRR2589044/SRR2589044_1.fastq.gz
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/004/SRR2589044/SRR2589044_2.fastq.gz
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/003/SRR2584863/SRR2584863_1.fastq.gz
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/003/SRR2584863/SRR2584863_2.fastq.gz
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/006/SRR2584866/SRR2584866_1.fastq.gz
-$ curl -O ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR258/006/SRR2584866/SRR2584866_2.fastq.gz
-```
-
-Here we are using the `-p` option for `mkdir`. This option allows `mkdir` to create the new directory, even if one of the parent directories does not already exist. It also suppresses errors if the directory already exists, without overwriting that directory.
-
-It will take about 15 minutes to download the files.
-
-![](images/download-data.png)
-
-Then open the window to the data:
-
-``` bash
-$ open .
-```
-
-The following window will open:
-
-![](images/downloaded-data-in-windows.png)
-
-Now you can use the Windows navigation system to transfer the files to the remote server.
-
-![](images/move-data-do-server.png)
-
-Now using the terminal, you can access the remote server using the `ssh` command (use your username)
-
-``` bash
-$ ssh [username]@hpc.nbi.ac.uk
-```
-
-Now that you are logged in on the server, we must start an `interactive` session.
-
-``` bash
-$ interactive
-```
-
-The terminal will then display a welcome message with specifications about the interactive session that was just started.
-
-![](images/start-interactive-session.png)
-
-Now you can access the directory that now should contain the fastq files.
-
-``` bash
-$ cd ~/dc_workshop/data/untrimmed_fastq
-```
-
-The data comes in a compressed format, which is why there is a `.gz` at the end of the file names. This makes it faster to transfer, and allows it to take up less space on our computer. Let's unzip one of the files so that we can look at the fastq format.
-
-``` bash
-$ gunzip SRR2584863_1.fastq.gz
-```
-
-It takes few seconds.
+It takes a few seconds.
 
 ## Quality control
 
@@ -154,7 +88,7 @@ It takes few seconds.
 Although it looks complicated (and it is), we can understand the [fastq](https://en.wikipedia.org/wiki/FASTQ_format) format with a little decoding. Some rules about the format include...
 
 | Line | Description                                                                                                  |
-|:-----------------|:-----------------------------------------------------|
+|:------------------|:----------------------------------------------------|
 | 1    | Always begins with '\@' and then information about the read                                                  |
 | 2    | The actual DNA sequence                                                                                      |
 | 3    | Always begins with a '+' and sometimes the same info in line 1                                               |
@@ -248,7 +182,7 @@ In real life, you will not be assessing the quality of your reads by visually in
 
 FastQC has a number of features which can give you a quick impression of any problems your data may have, so you can take these issues into consideration before moving forward with your analyses. Rather than looking at quality scores for each individual read, FastQC looks at quality collectively across all reads within a sample. The image below shows one FastQC-generated plot that indicates a very high quality sample:
 
-![good_quality](https://datacarpentry.org/wrangling-genomics/img/good_quality1.8.png){alt="good_quality"}
+![good_quality](https://datacarpentry.org/wrangling-genomics/img/good_quality1.8.png)
 
 The x-axis displays the base position in the read, and the y-axis shows quality scores. In this example, the sample contains reads that are 40 bp long. This is much shorter than the reads we are working with in our workflow. For each position, there is a box-and-whisker plot showing the distribution of quality scores for all reads at that position. The horizontal red line indicates the median quality score and the yellow box shows the 1st to 3rd quartile range. This means that 50% of reads have a quality score that falls within the range of the yellow box at that position. The whiskers show the absolute range, which covers the lowest (0th quartile) to highest (4th quartile) values.
 
@@ -256,7 +190,7 @@ For each position in this sample, the quality values do not drop much lower than
 
 Now let's take a look at a quality plot on the other end of the spectrum.
 
-![bad_quality](https://datacarpentry.org/wrangling-genomics/img/bad_quality1.8.png){alt="bad_quality"}
+![bad_quality](https://datacarpentry.org/wrangling-genomics/img/bad_quality1.8.png)
 
 Here, we see positions within the read in which the boxes span a much wider range. Also, quality scores drop quite low into the "bad" range, particularly on the tail end of the reads. The FastQC tool produces several other diagnostic plots to assess sample quality, in addition to the one plotted above.
 
@@ -298,25 +232,29 @@ $ fastqc *.fastq*
 
 You will see an automatically updating output message telling you the progress of the analysis. It will start like this:
 
-    Started analysis of SRR2584863_1.fastq
-    Approx 5% complete for SRR2584863_1.fastq
-    Approx 10% complete for SRR2584863_1.fastq
-    Approx 15% complete for SRR2584863_1.fastq
-    Approx 20% complete for SRR2584863_1.fastq
-    Approx 25% complete for SRR2584863_1.fastq
-    Approx 30% complete for SRR2584863_1.fastq
-    Approx 35% complete for SRR2584863_1.fastq
-    Approx 40% complete for SRR2584863_1.fastq
-    Approx 45% complete for SRR2584863_1.fastq
+```         
+Started analysis of SRR2584863_1.fastq
+Approx 5% complete for SRR2584863_1.fastq
+Approx 10% complete for SRR2584863_1.fastq
+Approx 15% complete for SRR2584863_1.fastq
+Approx 20% complete for SRR2584863_1.fastq
+Approx 25% complete for SRR2584863_1.fastq
+Approx 30% complete for SRR2584863_1.fastq
+Approx 35% complete for SRR2584863_1.fastq
+Approx 40% complete for SRR2584863_1.fastq
+Approx 45% complete for SRR2584863_1.fastq
+```
 
 In total, it should take about five minutes for FastQC to run on all six of our FASTQ files. When the analysis completes, your prompt will return. So your screen will look something like this:
 
-    Approx 80% complete for SRR2589044_2.fastq.gz
-    Approx 85% complete for SRR2589044_2.fastq.gz
-    Approx 90% complete for SRR2589044_2.fastq.gz
-    Approx 95% complete for SRR2589044_2.fastq.gz
-    Analysis complete for SRR2589044_2.fastq.gz
-    $
+```         
+Approx 80% complete for SRR2589044_2.fastq.gz
+Approx 85% complete for SRR2589044_2.fastq.gz
+Approx 90% complete for SRR2589044_2.fastq.gz
+Approx 95% complete for SRR2589044_2.fastq.gz
+Analysis complete for SRR2589044_2.fastq.gz
+$
+```
 
 The FastQC program has created several new files within our `data/untrimmed_fastq/` directory.
 
@@ -446,27 +384,29 @@ In this example, the input is six filenames (one filename for each of our `.zip`
 
 When we run our `for` loop, you will see output that starts like this:
 
-    Archive:  SRR2589044_2_fastqc.zip
-       creating: SRR2589044_2_fastqc/
-       creating: SRR2589044_2_fastqc/Icons/
-       creating: SRR2589044_2_fastqc/Images/
-      inflating: SRR2589044_2_fastqc/Icons/fastqc_icon.png
-      inflating: SRR2589044_2_fastqc/Icons/warning.png
-      inflating: SRR2589044_2_fastqc/Icons/error.png
-      inflating: SRR2589044_2_fastqc/Icons/tick.png
-      inflating: SRR2589044_2_fastqc/summary.txt
-      inflating: SRR2589044_2_fastqc/Images/per_base_quality.png
-      inflating: SRR2589044_2_fastqc/Images/per_tile_quality.png
-      inflating: SRR2589044_2_fastqc/Images/per_sequence_quality.png
-      inflating: SRR2589044_2_fastqc/Images/per_base_sequence_content.png
-      inflating: SRR2589044_2_fastqc/Images/per_sequence_gc_content.png
-      inflating: SRR2589044_2_fastqc/Images/per_base_n_content.png
-      inflating: SRR2589044_2_fastqc/Images/sequence_length_distribution.png
-      inflating: SRR2589044_2_fastqc/Images/duplication_levels.png
-      inflating: SRR2589044_2_fastqc/Images/adapter_content.png
-      inflating: SRR2589044_2_fastqc/fastqc_report.html
-      inflating: SRR2589044_2_fastqc/fastqc_data.txt
-      inflating: SRR2589044_2_fastqc/fastqc.fo
+```         
+Archive:  SRR2589044_2_fastqc.zip
+   creating: SRR2589044_2_fastqc/
+   creating: SRR2589044_2_fastqc/Icons/
+   creating: SRR2589044_2_fastqc/Images/
+  inflating: SRR2589044_2_fastqc/Icons/fastqc_icon.png
+  inflating: SRR2589044_2_fastqc/Icons/warning.png
+  inflating: SRR2589044_2_fastqc/Icons/error.png
+  inflating: SRR2589044_2_fastqc/Icons/tick.png
+  inflating: SRR2589044_2_fastqc/summary.txt
+  inflating: SRR2589044_2_fastqc/Images/per_base_quality.png
+  inflating: SRR2589044_2_fastqc/Images/per_tile_quality.png
+  inflating: SRR2589044_2_fastqc/Images/per_sequence_quality.png
+  inflating: SRR2589044_2_fastqc/Images/per_base_sequence_content.png
+  inflating: SRR2589044_2_fastqc/Images/per_sequence_gc_content.png
+  inflating: SRR2589044_2_fastqc/Images/per_base_n_content.png
+  inflating: SRR2589044_2_fastqc/Images/sequence_length_distribution.png
+  inflating: SRR2589044_2_fastqc/Images/duplication_levels.png
+  inflating: SRR2589044_2_fastqc/Images/adapter_content.png
+  inflating: SRR2589044_2_fastqc/fastqc_report.html
+  inflating: SRR2589044_2_fastqc/fastqc_data.txt
+  inflating: SRR2589044_2_fastqc/fastqc.fo
+```
 
 ![](images/unzip-fastqc-output-file.png)
 
@@ -476,12 +416,14 @@ are a lot of files here. The one we are going to focus on is the `summary.txt` f
 
 If you list the files in our directory now you will see:
 
-    SRR2584863_1_fastqc       SRR2584866_1_fastqc       SRR2589044_1_fastqc
-    SRR2584863_1_fastqc.html  SRR2584866_1_fastqc.html  SRR2589044_1_fastqc.html
-    SRR2584863_1_fastqc.zip   SRR2584866_1_fastqc.zip   SRR2589044_1_fastqc.zip
-    SRR2584863_2_fastqc       SRR2584866_2_fastqc       SRR2589044_2_fastqc
-    SRR2584863_2_fastqc.html  SRR2584866_2_fastqc.html  SRR2589044_2_fastqc.html
-    SRR2584863_2_fastqc.zip   SRR2584866_2_fastqc.zip   SRR2589044_2_fastqc.zip
+```         
+SRR2584863_1_fastqc       SRR2584866_1_fastqc       SRR2589044_1_fastqc
+SRR2584863_1_fastqc.html  SRR2584866_1_fastqc.html  SRR2589044_1_fastqc.html
+SRR2584863_1_fastqc.zip   SRR2584866_1_fastqc.zip   SRR2589044_1_fastqc.zip
+SRR2584863_2_fastqc       SRR2584866_2_fastqc       SRR2589044_2_fastqc
+SRR2584863_2_fastqc.html  SRR2584866_2_fastqc.html  SRR2589044_2_fastqc.html
+SRR2584863_2_fastqc.zip   SRR2584866_2_fastqc.zip   SRR2589044_2_fastqc.zip
+```
 
 The `.html` files and the uncompressed `.zip` files are still present, but now we also have a new directory for each of our samples. We can see for sure that it is a directory if we use the `-F` flag for `ls`.
 
