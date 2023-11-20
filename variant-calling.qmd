@@ -167,9 +167,9 @@ The [SAM file](https://genome.sph.umich.edu/wiki/SAM) for "sequence alignment ma
 
 The file begins with a **header**, which is optional. The header is used to describe the source of data, reference sequence, method of alignment, etc., this will change depending on the aligner being used. Following the header is the **alignment section**. Each line that follows corresponds to alignment information for a single read. Each alignment line has **11 mandatory fields** for essential mapping information and a variable number of other fields for aligner specific information. An example entry from a SAM file is displayed below with the different fields highlighted.
 
-![](https://datacarpentry.org/wrangling-genomics/img/sam_bam.png)
+![](images/sam_bam.png)
 
-![](https://datacarpentry.org/wrangling-genomics/img/sam_bam3.png)
+![](images/sam_bam3.png)
 
 We will convert the SAM file to BAM format using the `samtools` program [@li2009sequence] with the `view` command and tell this command that the input is in SAM format (`-S`) and to output BAM format (`-b`):
 

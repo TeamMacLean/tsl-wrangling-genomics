@@ -301,7 +301,7 @@ div.csl-indent {
 <p>We mentioned before that we are working with files from a long-term evolution study of an <em>E. coli</em> population (designated Ara-3). Now that we have looked at our data to make sure that it is high quality, and removed low-quality base calls, we can perform variant calling to see how the population changed over time. We care how this population changed relative to the original population, <em>E. coli</em> strain REL606. Therefore, we will align each of our samples to the <em>E. coli</em> REL606 reference genome, and see what differences exist in our reads versus the genome.</p>
 <section id="alignment-to-a-reference-genome" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="alignment-to-a-reference-genome"><span class="header-section-number">4.1</span> Alignment to a reference genome</h2>
-<p>We perform read alignment or mapping to determine where in the genome our reads originated from. There are a number of tools to choose from and, while there is no gold standard, there are some tools that are better suited for particular NGS analyses. We will be using the Burrows Wheeler Aligner (BWA) by <span class="citation" data-cites="li2010fast">Li and Durbin (<a href="#ref-li2010fast" role="doc-biblioref">2010</a>)</span>, which is a software package for mapping low-divergent sequences against a large reference genome.</p>
+<p>We perform read alignment or mapping to determine where in the genome our reads originated from. There are a number of tools to choose from and, while there is no gold standard, there are some tools that are better suited for particular NGS analyses. We will be using the Burrows Wheeler Aligner (BWA) by <span class="citation" data-cites="li2010fast">Li and Durbin (<a href="references.html#ref-li2010fast" role="doc-biblioref">2010</a>)</span>, which is a software package for mapping low-divergent sequences against a large reference genome.</p>
 <p>The alignment process consists of two steps:</p>
 <ol type="1">
 <li>Indexing the reference genome</li>
@@ -426,12 +426,12 @@ Tip
 <p>It should take less than a minute to be complete.</p>
 <section id="sambam-format" class="level3" data-number="4.4.1">
 <h3 data-number="4.4.1" class="anchored" data-anchor-id="sambam-format"><span class="header-section-number">4.4.1</span> SAM/BAM format</h3>
-<p>The <a href="https://genome.sph.umich.edu/wiki/SAM">SAM file</a> for “sequence alignment map”, is a tab-delimited text file that contains information for each individual read and its alignment to the genome. While we do not have time to go into detail about the features of the SAM format, the paper by <span class="citation" data-cites="li2009sequence">Li et al. (<a href="#ref-li2009sequence" role="doc-biblioref">2009</a>)</span> provides a lot more detail on the specification.</p>
+<p>The <a href="https://genome.sph.umich.edu/wiki/SAM">SAM file</a> for “sequence alignment map”, is a tab-delimited text file that contains information for each individual read and its alignment to the genome. While we do not have time to go into detail about the features of the SAM format, the paper by <span class="citation" data-cites="li2009sequence">Li et al. (<a href="references.html#ref-li2009sequence" role="doc-biblioref">2009</a>)</span> provides a lot more detail on the specification.</p>
 <p><strong>The compressed binary version of SAM is called a BAM file</strong> for “binary sequence alignment map”. We use this version to reduce size and to allow for <em>indexing</em>, which enables efficient random access of the data contained within the file.</p>
 <p>The file begins with a <strong>header</strong>, which is optional. The header is used to describe the source of data, reference sequence, method of alignment, etc., this will change depending on the aligner being used. Following the header is the <strong>alignment section</strong>. Each line that follows corresponds to alignment information for a single read. Each alignment line has <strong>11 mandatory fields</strong> for essential mapping information and a variable number of other fields for aligner specific information. An example entry from a SAM file is displayed below with the different fields highlighted.</p>
-<p><img src="https://datacarpentry.org/wrangling-genomics/img/sam_bam.png" class="img-fluid"></p>
-<p><img src="https://datacarpentry.org/wrangling-genomics/img/sam_bam3.png" class="img-fluid"></p>
-<p>We will convert the SAM file to BAM format using the <code>samtools</code> program <span class="citation" data-cites="li2009sequence">(<a href="#ref-li2009sequence" role="doc-biblioref">Li et al. 2009</a>)</span> with the <code>view</code> command and tell this command that the input is in SAM format (<code>-S</code>) and to output BAM format (<code>-b</code>):</p>
+<p><img src="images/sam_bam.png" class="img-fluid"></p>
+<p><img src="images/sam_bam3.png" class="img-fluid"></p>
+<p>We will convert the SAM file to BAM format using the <code>samtools</code> program <span class="citation" data-cites="li2009sequence">(<a href="references.html#ref-li2009sequence" role="doc-biblioref">Li et al. 2009</a>)</span> with the <code>view</code> command and tell this command that the input is in SAM format (<code>-S</code>) and to output BAM format (<code>-b</code>):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source package /tsl/software/testing/bin/samtools-1.9</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> samtools view <span class="at">-S</span> <span class="at">-b</span> results/sam/SRR2584866.aligned.sam <span class="op">&gt;</span> results/bam/SRR2584866.aligned.bam</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[samopen]</span> SAM header is present: 1 sequences.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -788,7 +788,7 @@ Key points
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-li2010fast" class="csl-entry" role="listitem">
 Li, Heng, and Richard Durbin. 2010. <span>“Fast and Accurate Long-Read Alignment with Burrows–Wheeler Transform.”</span> <em>Bioinformatics</em> 26 (5): 589–95.
 </div>
