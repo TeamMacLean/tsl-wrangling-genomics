@@ -275,6 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="2.1" class="anchored" data-anchor-id="bioinformatic-workflows"><span class="header-section-number">2.1</span> Bioinformatic workflows</h2>
 <p>When working with high-throughput sequencing data, the raw reads you get off of the sequencer will need to pass through a number of different tools in order to generate your final desired output. The execution of this set of tools in a specified order is commonly referred to as a workflow or a pipeline.</p>
 <p>An example of the workflow we will be using for our variant calling analysis is provided below with a brief description of each step.</p>
+<p><img src="images/pipeline.png" class="img-fluid"></p>
 <ol type="1">
 <li><p>Quality control - Assessing quality</p></li>
 <li><p>Quality control - Trimming and/or filtering reads (if necessary)</p></li>
@@ -311,8 +312,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Although it looks complicated (and it is), we can understand the <a href="https://en.wikipedia.org/wiki/FASTQ_format">fastq</a> format with a little decoding. Some rules about the format include…</p>
 <table class="table">
 <colgroup>
-<col style="width: 26%">
-<col style="width: 73%">
+<col style="width: 27%">
+<col style="width: 72%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -406,11 +407,11 @@ Solution
 </section>
 <section id="assessing-read-quality-with-fastqc" class="level3" data-number="2.3.2">
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="assessing-read-quality-with-fastqc"><span class="header-section-number">2.3.2</span> Assessing read quality with FastQC</h3>
-<p>In real life, you will not be assessing the quality of your reads by visually inspecting your FASTQ files. Rather, you will be using a software program to assess read quality and filter out poor quality reads. We will first use a program called <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a> <span class="citation" data-cites="andrews2010fastqcto">(<a href="references.html#ref-andrews2010fastqcto" role="doc-biblioref"><strong>andrews2010fastqcto?</strong></a>)</span> visualize the quality of our reads. Later in our workflow, we will use another program to filter out poor quality reads.</p>
+<p>In real life, you will not be assessing the quality of your reads by visually inspecting your FASTQ files. Rather, you will be using a software program to assess read quality and filter out poor quality reads. We will first use a program called <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a> <span class="citation" data-cites="andrews2010fastqcto">(<a href="#ref-andrews2010fastqcto" role="doc-biblioref"><strong>andrews2010fastqcto?</strong></a>)</span> visualize the quality of our reads. Later in our workflow, we will use another program to filter out poor quality reads.</p>
 <p>FastQC has a number of features which can give you a quick impression of any problems your data may have, so you can take these issues into consideration before moving forward with your analyses. Rather than looking at quality scores for each individual read, FastQC looks at quality collectively across all reads within a sample. The image below shows one FastQC-generated plot that indicates a very high quality sample:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://datacarpentry.org/wrangling-genomics/img/good_quality1.8.png" class="img-fluid figure-img"></p>
+<p><img src="images/fastqc-good.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">good_quality</figcaption>
 </figure>
 </div>
@@ -419,7 +420,7 @@ Solution
 <p>Now let’s take a look at a quality plot on the other end of the spectrum.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://datacarpentry.org/wrangling-genomics/img/bad_quality1.8.png" class="img-fluid figure-img"></p>
+<p><img src="images/fastqc-bad.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">bad_quality</figcaption>
 </figure>
 </div>
@@ -508,7 +509,12 @@ $</code></pre>
 <p>If we were working on our local computers, we would be able to look at each of these HTML files by opening them in a web browser.</p>
 <p>However, these files are currently sitting on our remote server, where our local computer can not see them. And, since we are only logging into the server via the command line - it does not have any web browser setup to display these files either.</p>
 <p>So the easiest way to look at these webpage summary reports will be to transfer them to our local computers (i.e.&nbsp;your laptop).</p>
-<p>To transfer a file from a remote server to our own machines, we will simply use the Windows navigation system (in a similar manner as we downloaded the data to our local computer and then transferred the data to the server).</p>
+<p>To transfer a file from a remote server to our own machines, we will simply use the Windows navigation system.</p>
+<ol type="1">
+<li>From the Start Menu, select Run, then type <code>\\tsl-hpc-data\HPC-Home</code></li>
+<li>You may need to toggle <code>Use different credentials</code> on or off</li>
+</ol>
+<p>A window with the directory showing the files in should pop up</p>
 <p><img src="images/transfer-results-to-local.png" class="img-fluid"></p>
 <p>Now we can go to our new directory and open the 6 HTML files.</p>
 <p>Depending on your system, you should be able to select and open them all at once via a right click menu in your file browser.</p>
