@@ -313,8 +313,9 @@ div.csl-indent {
 <section id="option-1-copy-from-shared-directory-on-the-hpc" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="option-1-copy-from-shared-directory-on-the-hpc"><span class="header-section-number">4.2.1</span> Option 1: Copy from shared directory on the HPC</h3>
 <p>You should already have all the files from the previous section where we copied all files we need including the reference genome and small dataset to your directory. Now:</p>
-<p>Unzip the reference genome</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> gunzip ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Unzip the reference genome after changing to the proper directory</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dc_workshop/data/ref_genome</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> gunzip ecoli_rel606.fasta.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-caution no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

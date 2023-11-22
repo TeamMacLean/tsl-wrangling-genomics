@@ -38,9 +38,10 @@ The alignment process consists of two steps:
 
 You should already have all the files from the previous section where we copied all files we need including the reference genome and small dataset to your directory. Now:
 
-Unzip the reference genome
+Unzip the reference genome after changing to the proper directory
 
 ``` bash
+$ cd ~/dc_workshop/data/ref_genome
 $ gunzip ecoli_rel606.fasta.gz
 ```
 
