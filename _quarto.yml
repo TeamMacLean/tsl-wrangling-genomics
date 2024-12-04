@@ -20,6 +20,10 @@ bibliography: references.bib
 format:
   html:
     theme: cosmo
+    other-links:
+      - text: Introduction to Genomics Chatbot
+        href: https://tsl-bioinformatics.shinyapps.io/genomics_chatbot/
+        target: _blank
   pdf:
     documentclass: scrreprt
 
